@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by DELL PC on 28-01-2017.
  */
@@ -46,6 +48,8 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
+            FetchWeatherTask weatherTask = new FetchWeatherTask();
+            weatherTask.execute();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -127,6 +131,9 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
                         return null;
                     }
                     forecastJsonStr = buffer.toString();
+
+                    Log.v(TAG, "Forecast String " + forecastJsonStr);
+
                 } catch (IOException e) {
                     Log.e("PlaceholderFragment", "Error ", e);
                     // If the code didn't successfully get the weather data, there's no point in attemping
