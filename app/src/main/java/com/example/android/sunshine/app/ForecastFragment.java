@@ -40,6 +40,9 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
     public ForecastFragment() {
     }
 
+    private ArrayAdapter<String> mForecastAdapter;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +80,7 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
         List<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        ArrayAdapter<String> mForecastAdapter =
+        mForecastAdapter =
                 new ArrayAdapter<String>(
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_forecast, // The name of the layout ID.
@@ -92,6 +95,9 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
         public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
             private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+
+
+
 
             @Override
             protected String[] doInBackground(String... params) {
@@ -187,6 +193,16 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
                 return null;
             }
 
+            @Override
+            protected void onPostExecute(String[] result) {
+
+                if (result != null) {
+                    mForecastAdapter.clear();
+                    for(String dayForecastStr : result) {
+                        mForecastAdapter.add(dayForecastStr);
+                    }
+                }
+            }
 
         }
     private String getReadableDateString(long time){
