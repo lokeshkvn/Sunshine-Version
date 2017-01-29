@@ -1,6 +1,7 @@
 package com.example.android.sunshine.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,10 +97,9 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Context context = getActivity();
                 String forecast = mForecastAdapter.getItem(i);
-                int duration = Toast.LENGTH_SHORT;
 
-                Toast toast = Toast.makeText(context, forecast, duration);
-                toast.show();
+                Intent downloadIntent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT,forecast);
+                startActivity(downloadIntent);
             }
         });
         return rootView;
