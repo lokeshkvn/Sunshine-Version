@@ -31,10 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import static android.R.attr.data;
 import static android.content.ContentValues.TAG;
 
 /**
@@ -227,7 +224,15 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
     /**
      * Prepare the weather high/lows for presentation.
      */
-    private String formatHighLows(double high, double low) {
+    private String formatHighLows(double high, double low, String unitType) {
+
+        if (unitType.equals(getString(R.string.pref_units_imperial))) {
+            high = (high * 1.8) + 32;
+            low = (low * 1.8) + 32;
+        } else if (!unitType.equals(getString(R.string.pref_units_metric))) {
+            Log.d(TAG, "Unit type not found: " + unitType);
+        }
+
         // For presentation, assume the user doesn't care about tenths of a degree.
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
@@ -237,7 +242,7 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
     }
 
 
-    private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+    private String[] getWeatherDataFromJson (String forecastJsonStr, int numDays)
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
@@ -269,6 +274,12 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
         dayTime = new Time();
 
         String[] resultStrs = new String[numDays];
+            SharedPreferences sharedPrefs =
+                                       PreferenceManager.getDefaultSharedPreferences(getActivity());
+                        String unitType = sharedPrefs.getString(
+                                        getString(R.string.pref_units_key),
+                                        getString(R.string.pref_units_metric));
+
         for(int i = 0; i < weatherArray.length(); i++) {
             // For now, using the format "Day, description, hi/low"
             String day;
@@ -296,7 +307,7 @@ public  class ForecastFragment extends android.support.v4.app.Fragment {
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);
 
-            highAndLow = formatHighLows(high, low);
+            highAndLow = formatHighLows(high, low, unitType);
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
         }
 
