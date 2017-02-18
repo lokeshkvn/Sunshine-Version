@@ -46,17 +46,14 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         else if (id == R.id.action_map){
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            String location = prefs.getString(getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default));
-
-            showMap(location);
+            showMap();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-    public void showMap(String location) {
-
+    public void showMap() {
+        String location = Utility.getPreferredLocation(this);
             Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
                       .appendQueryParameter("q", location)
                         .build();
