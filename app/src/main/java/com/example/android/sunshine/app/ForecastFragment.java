@@ -1,5 +1,8 @@
 package com.example.android.sunshine.app;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.service.SunshineService;
 
 /**
  * Created by DELL PC on 28-01-2017.
@@ -27,6 +31,7 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
     public ForecastFragment() {
     }
     private static final int FORECAST_LOADER = 0;
+    private boolean mUseTodayLayout;
 
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -60,7 +65,18 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
 
     private ForecastAdapter mForecastAdapter;
 
+    public void onLocationChanged() {
+        updateWeather();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
 
+
+    public interface Callback {
+                /**
+                  * DetailFragmentCallback for when an item has been selected.
+                  */
+                        public void onItemSelected(Uri dateUri);
+            }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,15 +123,14 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                    ((Callback) getActivity())
+                            .onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
                                     locationSetting, cursor.getLong(COL_WEATHER_DATE)
                             ));
-                    startActivity(intent);
                 }
             }
         });
-
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
         return rootView;
     }
 
@@ -128,9 +143,16 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
 
 
     private void updateWeather(){
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-        String location = Utility.getPreferredLocation(getActivity());
-        weatherTask.execute(location);
+        Intent alarmIntent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+                alarmIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
+
+                        //Wrap in a pending intent which only fires once.
+                                PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0,alarmIntent,PendingIntent.FLAG_ONE_SHOT);//getBroadcast(context, 0, i, 0);
+
+                       AlarmManager am=(AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+
+                       //Set the AlarmManager to wake up the system.
+                                am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
     }
 
 
@@ -158,8 +180,17 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
+
         mForecastAdapter.swapCursor(null);
     }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+                mUseTodayLayout = useTodayLayout;
+                if (mForecastAdapter != null) {
+                        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+                   }
+            }
+
 }
 

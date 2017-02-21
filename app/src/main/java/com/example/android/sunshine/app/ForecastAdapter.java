@@ -52,6 +52,9 @@ public class ForecastAdapter extends CursorAdapter {
     /*
         Remember that these views are reused as needed.
      */
+
+    private boolean mUseTodayLayout = true;
+
     public static class ViewHolder {
         public final ImageView iconView;
         public final TextView dateView;
@@ -68,6 +71,9 @@ public class ForecastAdapter extends CursorAdapter {
         }
     }
 
+    public void setUseTodayLayout(boolean useTodayLayout) {
+                mUseTodayLayout = useTodayLayout;
+            }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -120,6 +126,7 @@ public class ForecastAdapter extends CursorAdapter {
 
         // TODO Read weather forecast from cursor
         String forecast = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
+        viewHolder.iconView.setContentDescription(forecast);
         viewHolder.descriptionView.setText(forecast);
 
         // Read user preference for metric or imperial temperature units
@@ -135,7 +142,7 @@ public class ForecastAdapter extends CursorAdapter {
     }
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
+        return (position == 0 && mUseTodayLayout) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
     }
 
     @Override
