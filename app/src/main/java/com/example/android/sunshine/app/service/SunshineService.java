@@ -265,6 +265,9 @@ public class SunshineService extends IntentService {
                 this.getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, cvArray);
             }
 
+            this.getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
+                    WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
+                    new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
             Log.d(LOG_TAG, "Sunshine Service Complete. " + cVVector.size() + " Inserted");
 
         } catch (JSONException e) {
