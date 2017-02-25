@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="http://schemas.android.com/tools">
 
-    <string name="app_name">Sunshine</string>
+    <string name="app_name">Weather It</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh" translatable="false">Refresh</string>
@@ -53,6 +53,6 @@
         <!-- Humidity format CHAR LIMIT=25]-->
       <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
 
-<string name="empty_forecast_list">Wait, Fetching Weather Forecast...</string>
+<string name="empty_forecast_list">Fetching Weather Forecast...Please Wait</string>
     <string name="empty_forecast_list_no_network">No weather information available. The network is not available to fetch weather data.</string>
 </resources>
