@@ -1,13 +1,19 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingLeft="10sp"
+    android:paddingRight="10sp"
+    android:paddingTop="10sp"
+    android:paddingBottom="10sp">
 
     <LinearLayout
         android:gravity="center_vertical"
         android:layout_gravity="left"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+
         android:orientation="vertical"
+        android:background="#B9F6CA"
         android:padding="16dp">
 
         <!-- Header: Day, Date -->

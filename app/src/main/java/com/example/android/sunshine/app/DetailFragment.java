@@ -32,7 +32,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     static final String DETAIL_URI = "URI";
-    private static final String FORECAST_SHARE_HASHTAG = " #WeatherItApp";
+    private static final String FORECAST_SHARE_HASHTAG = "#Weather++App";
 
     private ShareActionProvider mShareActionProvider;
     private String mForecast;
