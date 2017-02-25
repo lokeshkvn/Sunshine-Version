@@ -106,11 +106,11 @@ public class SunshineService extends IntentService {
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
+
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
+
             e.printStackTrace();
         } finally {
             if (urlConnection != null) {
@@ -120,7 +120,6 @@ public class SunshineService extends IntentService {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
         }
@@ -268,7 +267,6 @@ public class SunshineService extends IntentService {
             this.getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
                     WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
                     new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
-            Log.d(LOG_TAG, "Sunshine Service Complete. " + cVVector.size() + " Inserted");
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);

@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.format.Time;
-import android.util.Log;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 
@@ -243,11 +242,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
             // Sort order:  Ascending, by date.
 
-            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted");
+
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
         }
     }
 
@@ -324,13 +321,12 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
         }
         catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
+
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
         }
         catch (JSONException e) {
-                        Log.e(LOG_TAG, e.getMessage(), e);
-                      e.printStackTrace();
+
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -339,7 +335,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+
                 }
             }
         }
