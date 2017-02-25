@@ -193,7 +193,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             double low = data.getDouble(COL_WEATHER_MIN_TEMP);
             String lowString = Utility.formatTemperature(getActivity(), low, isMetric);
             mLowTempView.setText(lowString);
-            Log.i(TAG, "low temp is "+ lowString + " high temp is " + highString);
+            Log.i(TAG, "low temp is "+ low + " high temp is " + high);
 
             // Read humidity from cursor and update view
             float humidity = data.getFloat(COL_WEATHER_HUMIDITY);

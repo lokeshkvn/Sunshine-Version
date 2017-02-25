@@ -8,7 +8,7 @@
     <string name="title_activity_detail">Details</string>
     <string name="pref_location_label">Location</string>
     <string name="pref_location_key" translatable="false">location</string>
-    <string name="pref_location_default" translatable="false">94013</string>
+    <string name="pref_location_default" translatable="false">Durgapur</string>
 
 
     <!-- Label for the temperature units preference [CHAR LIMIT=30] -->
@@ -53,5 +53,6 @@
         <!-- Humidity format CHAR LIMIT=25]-->
       <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
 
-
+<string name="empty_forecast_list">Wait, Fetching Weather Forecast...</string>
+    <string name="empty_forecast_list_no_network">No weather information available. The network is not available to fetch weather data.</string>
 </resources>

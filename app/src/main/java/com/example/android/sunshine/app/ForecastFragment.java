@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.service.SunshineService;
@@ -32,8 +34,11 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
 
     public ForecastFragment() {
     }
+    private ListView listView;
     private static final int FORECAST_LOADER = 0;
     private boolean mUseTodayLayout;
+    private int mPosition = ListView.INVALID_POSITION;
+    private static final String SELECTED_KEY = "selected_position";
 
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -94,8 +99,19 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_map) {
-            openPreferredLocationInMap();
-            return true;
+            if (Utility.isNetworkAvailable(getActivity())) {
+                openPreferredLocationInMap();
+                return true;
+            }
+            else {
+                Context context = getActivity();
+                CharSequence text = "Network not available";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -114,7 +130,9 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
 
 
 
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        View emptyView = rootView.findViewById(R.id.listview_forecast_empty);
+        listView.setEmptyView(emptyView);
         listView.setAdapter(mForecastAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -129,9 +147,17 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
                             .onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
                                     locationSetting, cursor.getLong(COL_WEATHER_DATE)
                             ));
+                    mPosition = position;
                 }
             }
         });
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            // The listview probably hasn't even been populated yet.  Actually perform the
+            // swapout in onLoadFinished.
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+
         mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
         return rootView;
     }
@@ -178,7 +204,12 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mForecastAdapter.swapCursor(cursor);
+        mForecastAdapter.swapCursor(cursor); if (mPosition != ListView.INVALID_POSITION) {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            listView.smoothScrollToPosition(mPosition);
+        }
+        updateEmptyView();
     }
 
     @Override
@@ -217,6 +248,29 @@ public  class ForecastFragment extends android.support.v4.app.Fragment implement
 
         }
     }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // When tablets rotate, the currently selected list item needs to be saved.
+        // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+        // so check for that before storing.
+        if (mPosition != ListView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
 
+    private void updateEmptyView() {
+        if ( mForecastAdapter.getCount() == 0 ) {
+            TextView tv = (TextView) getView().findViewById(R.id.listview_forecast_empty);
+            if ( null != tv ) {
+                // if cursor is empty, why? do we have an invalid location
+                int message = R.string.empty_forecast_list;
+                if (!Utility.isNetworkAvailable(getActivity()) ) {
+                    message = R.string.empty_forecast_list_no_network;
+                }
+                tv.setText(message);
+            }
+        }
+    }
 }
 
